@@ -34,10 +34,10 @@ class Request
         return $_POST;
     }
 
-    public function getGetParamsAsObj(string $className): object
-    {
-        $params = ObjectMapper::arrayToObject($className, $_GET);
+    // public function getGetParamsAsObj(string $className): object
+    // {
+    //     $params = ObjectMapper::arrayToObject($className, $_GET);
 
-        return $params;
-    }
+    //     return $params;
+    // }
 }
