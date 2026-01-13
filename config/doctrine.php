@@ -16,7 +16,7 @@ $connectionParams = [
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',
-    'dbname' => 'your_database_name',
+    'dbname' => 'istichara',
     'charset' => 'utf8mb4',
 ];
 

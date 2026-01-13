@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Core\Http;
+namespace App\Core\Http;
 
 class Response
 {

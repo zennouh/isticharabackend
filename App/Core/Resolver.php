@@ -26,15 +26,12 @@ class Resolver
             if ($type && $type->getName() === Request::class) {
 
                 $dependencies[] = App::getContainer()->resolve(Request::class);
-                
             } elseif ($type && $type->getName() === Response::class) {
 
                 $dependencies[] = App::getContainer()->resolve(Response::class);
-
             } elseif (!empty($action['params'])) {
 
                 $dependencies[] = array_shift($action['params']);
-
             }
         }
 

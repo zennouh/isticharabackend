@@ -1,8 +1,8 @@
 <?php
 
-namespace Core;
+namespace App\Core;
 
-use Core\Services\Container;
+use App\Core\Services\Container;
 
 class App
 {
@@ -10,10 +10,10 @@ class App
 
     static function   setContainer(Container $container)
     {
-        static::$container = $container;
+        self::$container = $container;
     }
     static  function  getContainer()
     {
-        return static::$container;
+        return self::$container;
     }
 }
