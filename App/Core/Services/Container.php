@@ -15,9 +15,9 @@ class Container
 
     public function resolve(string $className)
     {
-        
+
         if (!array_key_exists($className, $this->binds)) {
-            throw new \Exception("We could not find a match bindinds");
+            return null;
         }
         $resolver = $this->binds[$className];
         return call_user_func($resolver);
