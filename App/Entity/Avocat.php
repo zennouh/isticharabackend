@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Core\MyEntityManager;
+use App\Core\Services\ObjectMapper;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -26,22 +28,22 @@ class Avocat
     #[ORM\Column(type: 'integer')]
     private int $age;
 
-    // ENUMs → stored as string (Doctrine-safe)
+
     #[ORM\Column(type: 'string', length: 10)]
     private string $sexe;
 
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(name: "annes_experience", type: 'integer')]
     private int $annesExperience;
 
     #[ORM\Column(type: 'string', length: 50)]
     private string $specialite;
 
-    #[ORM\Column(type: 'string', length: 3)]
+    #[ORM\Column(name: "consult_en_ligne", type: 'string', length: 3)]
     private string $consultEnLigne = 'no';
 
-    // Relation
-    #[ORM\ManyToOne(targetEntity: Ville::class)]
+
     #[ORM\JoinColumn(name: 'ville_id', referencedColumnName: 'id')]
+    #[ORM\ManyToOne(targetEntity: Ville::class, inversedBy: 'avocats')]
     private Ville $ville;
 
     public function getId(): ?int
@@ -81,4 +83,129 @@ class Avocat
         $this->ville = $ville;
         return $this;
     }
+    // ------------------- PASSWORD -------------------
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+        return $this;
+    }
+
+    // ------------------- AGE -------------------
+    public function getAge(): int
+    {
+        return $this->age;
+    }
+
+    public function setAge(int $age): self
+    {
+        $this->age = $age;
+        return $this;
+    }
+
+    // ------------------- SEXE -------------------
+    public function getSexe(): string
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(string $sexe): self
+    {
+        $this->sexe = $sexe;
+        return $this;
+    }
+
+    // ------------------- ANNES EXPERIENCE -------------------
+    public function getAnnesExperience(): int
+    {
+        return $this->annesExperience;
+    }
+
+    public function setAnnesExperience(int $annesExperience): self
+    {
+        $this->annesExperience = $annesExperience;
+        return $this;
+    }
+
+    // ------------------- SPECIALITE -------------------
+    public function getSpecialite(): string
+    {
+        return $this->specialite;
+    }
+
+    public function setSpecialite(string $specialite): self
+    {
+        $this->specialite = $specialite;
+        return $this;
+    }
+
+    // ------------------- CONSULT EN LIGNE -------------------
+    public function getConsultEnLigne(): string
+    {
+        return $this->consultEnLigne;
+    }
+
+    public function setConsultEnLigne(string $consultEnLigne): self
+    {
+        $this->consultEnLigne = $consultEnLigne;
+        return $this;
+    }
+
+    public static function updateObject(Avocat $avocat, array $data): Avocat
+    {
+        $reflection = new \ReflectionClass($avocat);
+
+        foreach ($reflection->getProperties() as $property) {
+         
+            $propName = $property->getName();
+            $columnName = ObjectMapper::camelToSnake($propName);
+
+            if (!array_key_exists($columnName, $data)) {
+                continue;
+            }
+
+            $value = $data[$columnName];
+
+            // handle type conversion
+            $type = $property->getType()?->getName();
+            $value = match ($type) {
+                'int'    => (int) $value,
+                'float'  => (float) $value,
+                'bool'   => (bool) $value,
+                'string' => (string) $value,
+                default  => $value,
+            };
+
+            $property->setValue($avocat, $value);
+        }
+
+        return $avocat;
+    }
+
+
+    // static function toObject(object $data): self
+    // {
+    //     $ville = MyEntityManager::get()->getReference(
+    //         Ville::class,
+    //         $data->villeId
+    //     );
+
+    //     $avocat = new self();
+    //     $ville->setId($data->villeId);
+    //     $avocat->setEmail($data->email)
+    //         ->setFullName($data->fullName)
+    //         ->setPassword($data->password)
+    //         ->setAge($data->age)
+    //         ->setSexe($data->sexe)
+    //         ->setAnnesExperience($data->annesExperience)
+    //         ->setSpecialite($data->specialite)
+    //         ->setConsultEnLigne($data->consultEnLigne)
+    //         ->setVille($ville);
+
+    //     return $avocat;
+    // }
 }
