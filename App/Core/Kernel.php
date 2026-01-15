@@ -1,8 +1,8 @@
 <?php
 
-namespace Core;
+namespace App\Core;
 
-use Core\Router\Router;
+use App\Core\Router\Router;
 
 class Kernel
 {
