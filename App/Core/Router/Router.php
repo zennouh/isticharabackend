@@ -1,10 +1,10 @@
 <?php
 
-namespace Core\Router;
+namespace App\Core\Router;
 
-use Core\App;
-use Core\Http\Request;
-use Core\Router\Attributes\Route;
+use App\Core\App;
+use App\Core\Http\Request;
+use App\Core\Router\Attributes\Route;
 use ReflectionClass;
 
 class Router
@@ -21,7 +21,9 @@ class Router
     {
         $routes = [];
         $allFiles = glob($path);
+
         foreach ($allFiles as $class) {
+            $class = str_replace(["/", ".php", "..\\"], ["\\", "", ""], $class);
             $reflection = new ReflectionClass($class);
 
             $classMethods = $reflection->getMethods();
@@ -33,6 +35,8 @@ class Router
                     continue;
                 }
                 $argsArray = $routeAttr->getArguments();
+
+
 
                 $routes[] = [
                     "path" => $argsArray[0],

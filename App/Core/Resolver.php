@@ -1,11 +1,11 @@
 <?php
 
-namespace Core;
+namespace App\Core;
 
-use Core\Http\Request;
-use Core\Http\Response;
-use Core\Services\InjectionService;
-use Core\Services\InjectService;
+use App\Core\Http\Request;
+use App\Core\Http\Response;
+use App\Core\Services\InjectionService;
+
 use ReflectionMethod;
 
 class Resolver
@@ -14,7 +14,7 @@ class Resolver
 
     public function resolve(array $action)
     {
-
+      
 
         $controller = InjectionService::inject($action['class']);
 
