@@ -2,6 +2,7 @@
 
 namespace App\Core\Http;
 
+use App\Core\Services\ObjectMapper as ServicesObjectMapper;
 use ObjectMapper;
 
 class Request
@@ -29,15 +30,20 @@ class Request
         return $query;
     }
 
-    public function getPostParams(): array
+    public function getPostParams(string $className): object
     {
-        return $_POST;
+        $json_data = file_get_contents('php://input');
+
+        $data = json_decode($json_data, true);
+
+        return  ServicesObjectMapper::toObject($className, $data);
     }
+    public function bodyParam(): array
+    {
+        $json_data = file_get_contents('php://input');
 
-    // public function getGetParamsAsObj(string $className): object
-    // {
-    //     $params = ObjectMapper::arrayToObject($className, $_GET);
+        $data = json_decode($json_data, true);
 
-    //     return $params;
-    // }
+        return  $data;
+    }
 }
