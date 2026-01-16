@@ -19,11 +19,16 @@ abstract class BaseRepository
         return $this->em->createQueryBuilder()
             ->select($this->alias)
             ->from($this->entityClass, $this->alias)
-
         ;
     }
 
 
+    public function findAll(): array
+    {
+        return $this->qb()
+            ->getQuery()
+            ->getResult(); // ENTITY objects
+    }
     public function find(int $id): ?object
     {
         return $this->qb()
@@ -35,12 +40,6 @@ abstract class BaseRepository
     }
 
 
-    public function findAll(): array
-    {
-        return $this->qb()
-            ->getQuery()
-            ->getResult(); // ENTITY objects
-    }
 
     public function findBy(array $criteria, ?int $limit = null, ?int $offset = null): array
     {
@@ -79,10 +78,7 @@ abstract class BaseRepository
     public function update(object $entity, bool $flush = true): void
     {
         
-       
-
         $this->em->persist($entity);
-
         if ($flush) {
             $this->em->flush();
         }
