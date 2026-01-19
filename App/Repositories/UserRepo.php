@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Core\MyEntityManager;
 use App\Entity\User;
- 
+
 
 class UserRepo extends BaseRepository
 {

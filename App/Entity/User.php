@@ -21,6 +21,9 @@ class User
     private string $fullname;
 
     #[ORM\Column(type: 'string', length: 255)]
+    private string $role;
+
+    #[ORM\Column(type: 'string', length: 255)]
     private string $password;
 
     // Getters & Setters
@@ -48,6 +51,16 @@ class User
     public function setFullname(string $fullname): self
     {
         $this->fullname = $fullname;
+        return $this;
+    }
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+    public function setRole(string $role): self
+    {
+        $this->role = $role;
         return $this;
     }
 

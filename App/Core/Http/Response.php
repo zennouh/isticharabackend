@@ -12,4 +12,9 @@ class Response
         header("location: $location");
         exit;
     }
+    public function getHeader(string $key): ?string
+    {
+        $headers = getallheaders();
+        return $headers[$key] ?? null;
+    }
 }

@@ -4,11 +4,14 @@ namespace App\Core\Router;
 
 use App\Core\App;
 use App\Core\Http\Request;
+use App\Core\Middleware\Attributes\Middleware;
+use App\Core\Middleware\MiddlewareInterface;
 use App\Core\Router\Attributes\Route;
 use ReflectionClass;
 
 class Router
 {
+    private array $globalMiddlewares = [];
     public   function dispach(): ?array
     {
         $scannedRoute = $this->scan("../App/Controllers/*.php");
@@ -16,6 +19,13 @@ class Router
         $actions = $this->match($scannedRoute);
         return $actions;
     }
+
+
+    public function addGlobalMiddleware(MiddlewareInterface $middleware): void
+    {
+        $this->globalMiddlewares[] = $middleware;
+    }
+
 
     public  function scan(string $path): array
     {
@@ -36,13 +46,26 @@ class Router
                 }
                 $argsArray = $routeAttr->getArguments();
 
+                $middlewareAttr = $method->getAttributes(Middleware::class)[0] ?? null;
 
+                $methodMiddlewares = [];
+                $methodMiddlewares = array_merge($methodMiddlewares, $this->globalMiddlewares);
+
+                if ($middlewareAttr) {
+                    $args = (array) $middlewareAttr->getArguments()["middlewares"];
+                    foreach ($args as $v) {
+                        $ref = new ReflectionClass($v[0]);
+                        $middleware = $ref->newInstanceArgs($v[1]);
+                        $methodMiddlewares[] = $middleware;
+                    }
+                }
 
                 $routes[] = [
                     "path" => $argsArray[0],
                     "httpMethod" => $argsArray[1],
                     "class" => $class,
                     "method" => $method->getName(),
+                    "middlewares" =>  $methodMiddlewares,
                 ];
             }
         }
@@ -68,6 +91,7 @@ class Router
                     "httpMethod" => $method,
                     "class" => $route["class"],
                     "method" => $route["method"],
+                    "middlewares" => $route["middlewares"],
                 ];
             }
         }

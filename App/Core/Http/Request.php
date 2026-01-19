@@ -9,6 +9,25 @@ class Request
 
 {
 
+    private string $role;
+
+    public function setRole(string $role)
+    {
+        $this->role = $role;
+    }
+
+    public function getRole(): string
+    {
+        return $this->role;
+    }
+
+
+    public function getHeader(string $key): ?string
+    {
+        $headers = getallheaders();
+        return $headers[$key] ?? null;
+    }
+
     public function getMethod()
     {
         $method = $_SERVER["REQUEST_METHOD"];
@@ -26,8 +45,13 @@ class Request
 
     public function getQueryParams()
     {
-        $query = parse_url($_SERVER["REQUEST_URI"])["query"];
-        return $query;
+        $REQUEST_URI = parse_url($_SERVER["REQUEST_URI"]);
+        if (!isset($REQUEST_URI["query"])) {
+            return [];
+        }
+        $query = $REQUEST_URI["query"];
+        parse_str($query, $queryArray);
+        return  $queryArray;
     }
 
     public function getPostParams(string $className): object

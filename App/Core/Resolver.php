@@ -14,7 +14,18 @@ class Resolver
 
     public function resolve(array $action)
     {
-      
+        $request = App::getContainer()->resolve(Request::class);
+        $middlewares = $action["middlewares"] ?? [];
+
+        // var_dump($middlewares);
+
+
+
+        foreach ($middlewares as $md) {
+            // var_dump($md);
+            $md->handle($request);
+        }
+
 
         $controller = InjectionService::inject($action['class']);
 
@@ -34,6 +45,7 @@ class Resolver
                 $dependencies[] = array_shift($action['params']);
             }
         }
+
 
         return $reflection->invokeArgs($controller, $dependencies);
     }

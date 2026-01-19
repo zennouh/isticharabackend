@@ -11,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 $container = new Container();
 
+
 $container->bind(Request::class, fn() => new Request());
 
 $container->bind(Response::class, fn() => new Response());
