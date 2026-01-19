@@ -99,23 +99,53 @@ class ObjectMapper
 
         return $obj;
     }
-    public static function normalizer(object $className): array
+
+
+    public static function normalizer(object $entity, int $depth = 0, array $bring = []): array
     {
-        $resultArray = [];
-        $reflection = new ReflectionClass($className);
-        $props = $reflection->getProperties();
-        foreach ($props as $prop) {
-            $propName = $prop->getName();
-            $columnName = self::camelToSnake($propName);
 
-
-            $value = $prop->getValue($className);
-
-
-            $resultArray[$columnName] = $value;
+        if ($depth > 1) {
+            return [];
         }
-        return $resultArray;
+
+        $result = [];
+        $reflection = new ReflectionClass($entity);
+
+        foreach ($reflection->getProperties() as $property) {
+
+            $propName   = $property->getName();
+            $columnName = self::camelToSnake($propName);
+            $value      = $property->getValue($entity);
+
+            if ($value === null) {
+                $result[$columnName] = null;
+                continue;
+            }
+
+
+            if (is_object($value)) {
+
+                if (method_exists($value, 'getId')) {
+                    $result[$columnName] = [
+                        'id' => $value->getId(),
+                    ];
+
+                    if (method_exists($value, 'getName')) {
+                        $result[$columnName]['name'] = $value->getName();
+                    }
+                } else {
+                    $result[$columnName] = self::normalizer($value, $depth + 1);
+                }
+
+                continue;
+            }
+
+            $result[$columnName] = $value;
+        }
+
+        return $result;
     }
+
 
 
 
