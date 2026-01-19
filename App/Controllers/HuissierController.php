@@ -17,10 +17,18 @@ class HuissierController
 
 
     #[Route("/huissiers", "GET")]
-    public function index()
+    public function index(Request $request)
     {
+        $queryArray = $request->getQueryParams();
+        $start = isset($queryArray["start"]) ? $queryArray["start"] : 0;
+        $max = isset($queryArray["max"]) ? $queryArray["max"] : 5;
         $resultArray = [];
-        $huissiers = $this->huissierRepo->findAll();
+
+        $newArray = array_diff_key(
+            $queryArray,
+            array_flip(['start', 'max'])
+        );
+        $huissiers = $this->huissierRepo->findBy($newArray, $max, $start);
 
 
         foreach ($huissiers as $av) {

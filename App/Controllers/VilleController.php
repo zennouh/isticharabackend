@@ -10,17 +10,24 @@ use App\Core\Services\ObjectMapper;
 use App\Entity\Ville;
 use App\Repositories\VilleRepo;
 
-class ClientController
+class VilleController
 {
     public function __construct(private VilleRepo $villeRepo) {}
 
 
     #[Route("/villes", "GET")]
-    public function index()
+    public function index(Request $request)
     {
+        $queryArray = $request->getQueryParams();
+        $start = isset($queryArray["start"]) ? $queryArray["start"] : 0;
+        $max = isset($queryArray["max"]) ? $queryArray["max"] : 5;
         $resultArray = [];
-        $villes = $this->villeRepo->findAll();
 
+        $newArray = array_diff_key(
+            $queryArray,
+            array_flip(['start', 'max'])
+        );
+        $villes = $this->villeRepo->findBy($newArray, $max, $start);
 
         foreach ($villes as $av) {
             $resultArray[]  = ObjectMapper::normalizer($av);
@@ -39,7 +46,7 @@ class ClientController
     public function store(Request $request)
     {
 
-       $ville = $request->getPostParams(Ville::class);
+        $ville = $request->getPostParams(Ville::class);
 
         $this->villeRepo->save($ville);
         $response  = new JsonResponse([
@@ -52,11 +59,11 @@ class ClientController
     #[Route("/villes/{id}", "PATCH")]
     public function update(Request $request, int $id): void
     {
-       $adminArray = $request->bodyParam();
+        $adminArray = $request->bodyParam();
 
-       $adminObject = $this->villeRepo->find($id);
+        $adminObject = $this->villeRepo->find($id);
 
-        $obj = ObjectMapper::updateObject($adminObject,$adminArray);
+        $obj = ObjectMapper::updateObject($adminObject, $adminArray);
 
         $this->villeRepo->update($obj);
 
