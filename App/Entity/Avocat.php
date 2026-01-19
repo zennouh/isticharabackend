@@ -42,8 +42,8 @@ class Avocat
     private string $consultEnLigne = 'no';
 
 
-    #[ORM\JoinColumn(name: 'ville_id', referencedColumnName: 'id')]
     #[ORM\ManyToOne(targetEntity: Ville::class, inversedBy: 'avocats')]
+    #[ORM\JoinColumn(name: 'ville_id', referencedColumnName: 'id',)]
     private Ville $ville;
 
     public function getId(): ?int
@@ -186,26 +186,4 @@ class Avocat
         return $avocat;
     }
 
-
-    // static function toObject(object $data): self
-    // {
-    //     $ville = MyEntityManager::get()->getReference(
-    //         Ville::class,
-    //         $data->villeId
-    //     );
-
-    //     $avocat = new self();
-    //     $ville->setId($data->villeId);
-    //     $avocat->setEmail($data->email)
-    //         ->setFullName($data->fullName)
-    //         ->setPassword($data->password)
-    //         ->setAge($data->age)
-    //         ->setSexe($data->sexe)
-    //         ->setAnnesExperience($data->annesExperience)
-    //         ->setSpecialite($data->specialite)
-    //         ->setConsultEnLigne($data->consultEnLigne)
-    //         ->setVille($ville);
-
-    //     return $avocat;
-    // }
 }
