@@ -15,8 +15,4 @@ class AvocatRepo extends BaseRepository
         $this->em = MyEntityManager::get();
         $this->entityClass = Avocat::class;
     }
-
-    public function searchBy(string $filter) {
-
-    }
 }
