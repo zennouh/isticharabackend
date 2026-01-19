@@ -23,11 +23,13 @@ abstract class BaseRepository
     }
 
 
-    public function findAll(): array
+    public function findAll(int $start = 0, int $end = 3): array
     {
         return $this->qb()
+            ->setFirstResult($start)
+            ->setMaxResults($end)
             ->getQuery()
-            ->getResult(); // ENTITY objects
+            ->getResult();
     }
     public function find(int $id): ?object
     {
@@ -58,7 +60,7 @@ abstract class BaseRepository
             $qb->setFirstResult($offset);
         }
 
-        return $qb->getQuery()->getResult(); // ENTITY objects
+        return $qb->getQuery()->getResult();
     }
 
 
@@ -77,7 +79,7 @@ abstract class BaseRepository
     }
     public function update(object $entity, bool $flush = true): void
     {
-        
+
         $this->em->persist($entity);
         if ($flush) {
             $this->em->flush();
