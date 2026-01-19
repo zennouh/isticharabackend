@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use App\Core\MyEntityManager;
 use App\Entity\Avocat;
- 
+
 
 class AvocatRepo extends BaseRepository
 {
@@ -14,5 +14,9 @@ class AvocatRepo extends BaseRepository
     {
         $this->em = MyEntityManager::get();
         $this->entityClass = Avocat::class;
+    }
+
+    public function searchBy(string $filter) {
+
     }
 }
