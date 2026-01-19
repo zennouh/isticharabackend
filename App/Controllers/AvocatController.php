@@ -3,8 +3,11 @@
 namespace App\Controllers;
 
 use App\Core\Http\Request;
+use App\Core\Middleware\Attributes\Middleware;
+use App\Core\Middleware\RoleMiddleware;
 use App\Core\Router\Attributes\Route;
 use App\Core\Services\JsonResponse;
+use App\Core\Services\LoggerService;
 use App\Core\Services\ObjectMapper;
 use App\Entity\Avocat;
 use App\Repositories\AvocatRepo;
@@ -17,10 +20,24 @@ class AvocatController
 
 
     #[Route("/avocats", "GET")]
-    public function index()
+    #[Middleware(
+        middlewares: [
+            [RoleMiddleware::class, ["admin"]]
+        ],
+    )]
+    public function index(Request $request)
     {
+        $queryArray = $request->getQueryParams();
+        $start = isset($queryArray["start"]) ? $queryArray["start"] : 0;
+        $max = isset($queryArray["max"]) ? $queryArray["max"] : 5;
         $resultArray = [];
-        $avocats = $this->avocatRepo->findAll();
+
+        $newArray = array_diff_key(
+            $queryArray,
+            array_flip(['start', 'max'])
+        );
+        $avocats = $this->avocatRepo->findBy($newArray, $max, $start);
+
 
 
         foreach ($avocats as $av) {
@@ -32,7 +49,8 @@ class AvocatController
             'success' => true,
             'data' => $resultArray,
         ], 200);
-
+        LoggerService::getInstance()
+            ->info("all avocat has been fetched", []);
         $response->send();
     }
 
@@ -58,6 +76,10 @@ class AvocatController
         $avocatObject = $this->avocatRepo->find($id);
 
         $obj = ObjectMapper::updateObject($avocatObject, $avocatArray);
+
+        // var_dump($obj === $avocatObject);
+
+        // return;
 
         $this->avocatRepo->update($obj);
 
